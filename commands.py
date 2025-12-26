@@ -31,12 +31,14 @@ def execute_command(command):
             return "Không tìm thấy Overwolf Launcher."
 
     if "mở game" in command:
-        app_paths = r"C:\Riot Games\Riot Client\RiotClientServices.exe"
-        for path in app_paths:
-            if os.path.exists(path):
-                subprocess.Popen(path)
-                return "Đang mở game."
-        return "Tôi không tìm thấy game trên máy bạn."
+        app_path = r"C:\Riot Games\Riot Client\RiotClientServices.exe"
+        
+        if os.path.exists(app_path):
+            subprocess.Popen(app_path)
+            return "Đang mở game."
+        else:
+            return "Tôi không tìm thấy game trên máy bạn."
+
 
     if "mở youtube" in command:
         webbrowser.open("https://youtube.com")
@@ -93,7 +95,7 @@ def execute_command(command):
         now = datetime.datetime.now().strftime("%H:%M ngày %d tháng %m năm %Y")
         return f"Bây giờ là {now}"
 
-    if "tạm biệt" in command or "thoát" in command:
+    if "tạm biệt" in command or "thoát" in command or "kết thúc" in command:
         return "EXIT_AI"
 
     return "Tôi không hiểu lệnh này."

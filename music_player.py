@@ -14,13 +14,15 @@ player = None
 is_random_mode = False
 
 
+SUPPORTED_FORMATS = (".wav", ".mp3", ".flac", ".ogg", ".m4a")
+
 def load_playlist():
     global playlist
     if os.path.exists(music_folder):
         playlist = [
             os.path.join(music_folder, f)
             for f in os.listdir(music_folder)
-            if f.lower().endswith(".wav")
+            if f.lower().endswith(SUPPORTED_FORMATS)
         ]
         playlist.sort()
     else:
