@@ -4,6 +4,9 @@ import subprocess
 import webbrowser
 import datetime
 import pyautogui
+import requests
+import re
+from urllib.parse import quote_plus
 
 from music_player import (
     play_track, play_by_name, play_random,
@@ -11,6 +14,23 @@ from music_player import (
     next_track, previous_track,
     volume_up, volume_down, set_volume
 )
+
+def open_first_youtube_video(query_text):
+    query = quote_plus(query_text)
+    search_url = f"https://www.youtube.com/results?search_query={query}"
+
+    response = requests.get(search_url)
+    html = response.text
+
+    match = re.search(r'"videoId":"([a-zA-Z0-9_-]{11})"', html)
+
+    if match:
+        video_id = match.group(1)
+        video_url = f"https://www.youtube.com/watch?v={video_id}"
+        webbrowser.open(video_url)
+        return f"Đã mở video đầu tiên cho từ khóa: {query_text}"
+    else:
+        return "Không tìm thấy video phù hợp."
 
 
 def execute_command(command):
@@ -39,10 +59,14 @@ def execute_command(command):
         else:
             return "Tôi không tìm thấy game trên máy bạn."
 
-
     if "mở youtube" in command:
-        webbrowser.open("https://youtube.com")
-        return "Mở YouTube cho bạn đây."
+        tu_khoa = command.replace("mở youtube", "").strip()
+
+        if tu_khoa:
+            return open_first_youtube_video(tu_khoa)
+        else:
+            webbrowser.open("https://youtube.com")
+            return "Mở YouTube cho bạn đây."
 
     if "tìm kiếm" in command:
         query = command.replace("tìm kiếm", "").strip()

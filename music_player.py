@@ -13,6 +13,8 @@ current_track = 0
 player = None
 is_random_mode = False
 
+current_volume = 80 
+
 
 SUPPORTED_FORMATS = (".wav", ".mp3", ".flac", ".ogg", ".m4a")
 
@@ -30,11 +32,11 @@ def load_playlist():
 
 
 def play_track(index):
-    global current_track, player
+    global current_track, player, current_volume
     load_playlist()
 
     if not playlist:
-        return "Không có bài WAV nào trong thư mục."
+        return "Không có bài nhạc nào trong thư mục."
 
     if index < 0 or index >= len(playlist):
         return "Không tìm thấy bài nhạc."
@@ -52,10 +54,11 @@ def play_track(index):
         player.stop()
 
     player = vlc.MediaPlayer(track)
-    player.audio_set_volume(80)
     player.play()
 
-    time.sleep(0.5)
+    time.sleep(0.2)
+
+    player.audio_set_volume(current_volume)
 
     return f"Đang phát: {os.path.basename(track)}"
 
@@ -111,31 +114,29 @@ def previous_track():
 
 
 def volume_up():
-    global player
+    global player, current_volume
     if player:
-        current = player.audio_get_volume()
-        new_vol = min(100, current + 10)
-        player.audio_set_volume(new_vol)
-        return f"Tăng âm lượng lên {new_vol}%."
+        current_volume = min(100, current_volume + 10)
+        player.audio_set_volume(current_volume)
+        return f"Tăng âm lượng lên {current_volume}%."
     return "Không có nhạc nào đang phát."
 
 
 def volume_down():
-    global player
+    global player, current_volume
     if player:
-        current = player.audio_get_volume()
-        new_vol = max(0, current - 10)
-        player.audio_set_volume(new_vol)
-        return f"Giảm âm lượng xuống {new_vol}%."
+        current_volume = max(0, current_volume - 10)
+        player.audio_set_volume(current_volume)
+        return f"Giảm âm lượng xuống {current_volume}%."
     return "Không có nhạc nào đang phát."
 
 
 def set_volume(percent):
-    global player
+    global player, current_volume
     if player:
-        percent = max(0, min(100, percent))
-        player.audio_set_volume(percent)
-        return f"Đã đặt âm lượng thành {percent}%."
+        current_volume = max(0, min(100, percent))
+        player.audio_set_volume(current_volume)
+        return f"Đã đặt âm lượng thành {current_volume}%."
     return "Không có nhạc nào đang phát."
 
 def auto_next_loop():
